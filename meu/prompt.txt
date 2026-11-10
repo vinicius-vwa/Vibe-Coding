@@ -1,0 +1,204 @@
+# Descrição do minimundo
+
+O sistema tem como objetivo gerenciar informações relacionadas a automóveis, permitindo o cadastro de veículos, proprietários, categorias, lojas e operações de venda e reserva. Os veículos podem ser cadastrados para fins de exposição, comercialização ou reserva para clientes interessados.
+
+Um usuário é responsável por realizar operações no sistema, como cadastrar veículos, consultar informações, efetuar reservas e registrar vendas. Os usuários podem possuir diferentes permissões, de acordo com seu perfil e suas responsabilidades.
+
+Os veículos podem ser agrupados por categorias, como sedãs, SUVs, hatchbacks, picapes e esportivos. Um mesmo veículo pode pertencer a mais de uma categoria, permitindo diferentes formas de classificação e pesquisa.
+
+O sistema pode funcionar com múltiplas organizações, como concessionárias ou lojas de automóveis. Cada organização possui seus próprios veículos, usuários e registros comerciais, respeitando as regras de acesso estabelecidas.
+
+Os usuários podem consultar publicamente as informações não sigilosas dos veículos, como marca, modelo, ano, quilometragem, preço e categoria. Para realizar operações que exigem identificação, como reservar ou comprar um veículo, é necessário possuir uma conta no sistema.
+
+# Descrição das entidades
+
+## Um veículo possui:
+
+- um identificador único;
+- a marca do veículo;
+- o modelo;
+- o ano de fabricação;
+- o ano do modelo;
+- a placa, quando aplicável;
+- o número do chassi, quando aplicável;
+- a cor;
+- a quilometragem;
+- o tipo de combustível;
+- o tipo de transmissão;
+- o preço;
+- uma descrição com informações adicionais;
+- a data de cadastro no sistema;
+- o estado de conservação;
+- o indicador de disponibilidade;
+- a organização à qual pertence;
+- uma ou mais categorias;
+- o proprietário atual, quando aplicável.
+
+**RN:** Cada veículo deve possuir um identificador único no sistema.
+
+**RN:** A placa e o número do chassi, quando informados, devem respeitar as regras de unicidade definidas para o sistema.
+
+**RN:** Um veículo vendido não deve ser disponibilizado para novas reservas ou vendas enquanto não for novamente cadastrado como disponível para comercialização.
+
+**RN:** Veículos inativos não podem receber novas reservas.
+
+**RN:** O preço do veículo deve ser igual ou superior a zero.
+
+**RN:** A desativação de um veículo não deve apagar seu histórico de vendas ou reservas.
+
+## Um usuário possui:
+
+- um identificador único;
+- um nome;
+- um endereço de email;
+- uma senha, quando utilizar autenticação por senha;
+- uma data de cadastro;
+- um número de telefone, quando informado;
+- um indicador que informa se o usuário está ativo;
+- um perfil de acesso;
+- a organização à qual pertence, quando aplicável.
+
+**RN:** O email deve ser único no sistema.
+
+**RN:** Usuários inativos não podem realizar novas reservas ou operações de venda.
+
+**RN:** Um usuário só pode executar operações administrativas de acordo com suas permissões.
+
+**RN:** As senhas dos usuários não devem ser armazenadas em texto puro.
+
+## Um proprietário possui:
+
+- um identificador único;
+- um nome ou razão social;
+- um CPF ou CNPJ, quando aplicável;
+- um endereço de email, quando informado;
+- um telefone;
+- um endereço, quando informado;
+- uma data de cadastro.
+
+**RN:** Um proprietário pode possuir um ou mais veículos.
+
+**RN:** Um veículo pode possuir apenas um proprietário atual registrado por vez, sem impedir que o histórico de proprietários anteriores seja mantido.
+
+**RN:** Os dados pessoais dos proprietários não devem ser exibidos publicamente sem autorização adequada.
+
+## Uma categoria possui:
+
+- um identificador único;
+- um nome;
+- uma descrição;
+- uma data de cadastro;
+- um indicador que informa se está ativa;
+- a organização à qual pertence, quando aplicável.
+
+Exemplos de categorias: SUV, sedã, hatchback, picape, esportivo, elétrico e híbrido.
+
+**RN:** Uma categoria pode estar associada a vários veículos.
+
+**RN:** Um veículo pode pertencer a uma ou mais categorias.
+
+**RN:** Categorias inativas não devem aparecer nas opções de classificação de novos cadastros.
+
+## Uma organização possui:
+
+- um identificador único;
+- um nome;
+- um CNPJ, quando aplicável;
+- um endereço;
+- um telefone para contato;
+- uma data de cadastro;
+- um indicador que informa se está ativa.
+
+Exemplos: concessionária, revenda de veículos usados ou loja de automóveis.
+
+**RN:** Cada veículo cadastrado para comercialização deve estar associado a uma organização responsável.
+
+**RN:** Os usuários de uma organização só podem administrar os dados para os quais possuem autorização.
+
+**RN:** A desativação de uma organização não deve excluir automaticamente seus veículos, reservas ou registros de vendas.
+
+## Uma reserva possui:
+
+- um identificador único;
+- o veículo reservado;
+- o usuário que realizou a reserva;
+- o cliente interessado;
+- a data de criação;
+- a data de início da reserva;
+- a data de término, quando aplicável;
+- o estado da reserva;
+- uma observação;
+- a organização responsável pela reserva.
+
+**RN:** Um veículo não pode possuir duas reservas ativas que sejam incompatíveis entre si, de acordo com as regras de disponibilidade do sistema.
+
+**RN:** Uma reserva deve estar associada a um veículo existente e a um usuário autorizado.
+
+**RN:** Reservas canceladas devem manter seu registro histórico.
+
+**RN:** Uma reserva não garante a compra do veículo.
+
+**RN:** A confirmação de uma venda deve impedir que o veículo continue disponível para novas negociações incompatíveis.
+
+## Uma venda possui:
+
+- um identificador único;
+- o veículo vendido;
+- o comprador;
+- o vendedor responsável;
+- a organização responsável;
+- a data da venda;
+- o preço final;
+- a forma de pagamento;
+- o estado da venda;
+- uma observação, quando necessária.
+
+**RN:** Uma venda deve estar associada a um veículo e a um comprador existentes.
+
+**RN:** Um veículo não pode possuir duas vendas concluídas que representem a mesma comercialização.
+
+**RN:** O preço final da venda deve ser igual ou superior a zero.
+
+**RN:** O registro de uma venda deve atualizar a disponibilidade comercial do veículo.
+
+**RN:** O cancelamento de uma venda deve manter o histórico da operação e atualizar a disponibilidade do veículo conforme sua situação atual.
+
+## Um cliente possui:
+
+- um identificador único;
+- um nome;
+- um CPF ou CNPJ, quando aplicável;
+- um email;
+- um telefone;
+- uma data de cadastro;
+- um endereço, quando informado.
+
+**RN:** Um cliente pode realizar várias reservas e compras ao longo do tempo.
+
+**RN:** Cada reserva deve identificar o cliente interessado.
+
+**RN:** Uma venda deve identificar o comprador responsável pela aquisição do veículo.
+
+**RN:** Os dados pessoais dos clientes devem ser protegidos contra acessos não autorizados.
+
+# Regras gerais de negócio
+
+**RN:** O sistema deve garantir a integridade dos relacionamentos entre veículos, usuários, organizações, reservas, clientes e vendas.
+
+**RN:** Os registros históricos de reservas e vendas não devem ser apagados automaticamente quando um veículo ou usuário for desativado.
+
+**RN:** Apenas usuários autorizados podem cadastrar, editar ou remover logicamente veículos e categorias.
+
+**RN:** As consultas públicas devem apresentar somente informações autorizadas, sem expor dados pessoais, credenciais ou informações administrativas.
+
+**RN:** A criação de uma reserva deve verificar a disponibilidade atual do veículo.
+
+**RN:** As operações de venda devem ser realizadas de forma consistente, evitando que o mesmo veículo seja vendido simultaneamente para compradores diferentes.
+
+**RN:** As alterações de disponibilidade e os registros comerciais devem ser realizados de maneira transacional quando envolverem múltiplas operações relacionadas.
+
+**RN:** O sistema deve manter informações suficientes para consultar o histórico de reservas, vendas e alterações relevantes dos veículos.
+
+**RN:** Os dados obrigatórios de cada entidade devem ser validados antes de serem armazenados.
+
+**RN:** As operações realizadas pelos usuários devem respeitar as permissões estabelecidas pelo sistema e pela organização responsável.
