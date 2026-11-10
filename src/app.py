@@ -17,10 +17,109 @@ from src.models import (
 
 st.set_page_config(page_title="Vibe Coding", page_icon="🚗", layout="wide")
 
+HERO_IMAGE = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80"
+SIDEBAR_IMAGE = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=500&q=80"
+
+st.markdown(
+    """
+    <style>
+        html, body, [data-testid="stAppViewContainer"] {
+            background: #0b1020;
+            color: #e2e8f0;
+        }
+        .stApp {
+            background: radial-gradient(circle at top, rgba(96, 165, 250, 0.18), transparent 35%), #0b1020;
+        }
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+            max-width: 1500px;
+        }
+        .main .block-container {
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 24px;
+            padding: 1.5rem 1.5rem 2rem 1.5rem;
+            box-shadow: 0 25px 45px rgba(15, 23, 42, 0.35);
+        }
+        h1, h2, h3, h4, p, span, div {
+            color: #f8fafc;
+        }
+        .stSidebar {
+            background: linear-gradient(180deg, #020817 0%, #111827 100%);
+            border-right: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        .stSidebar .stRadio > div {
+            gap: 0.55rem;
+        }
+        .stSidebar [data-baseweb="radio"] > div {
+            padding: 0.55rem 0.8rem;
+            border-radius: 0.8rem;
+            background: rgba(148, 163, 184, 0.1);
+            color: white;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .stSidebar .stRadio label {
+            color: white;
+            font-weight: 600;
+        }
+        .stButton > button {
+            border: none;
+            border-radius: 0.8rem;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.7rem 1.25rem;
+            transition: transform 0.15s ease;
+        }
+        .stButton > button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(96, 165, 250, 0.35);
+        }
+        div[data-testid="stForm"] {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 18px;
+            padding: 1rem 1rem 0.5rem;
+            box-shadow: 0 16px 35px rgba(2, 6, 23, 0.35);
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #f8fafc;
+        }
+        [data-testid="stMetricLabel"] {
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        .summary-box {
+            border-radius: 1rem;
+            padding: 0.9rem 1rem;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 118, 110, 0.8));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.28);
+        }
+        .summary-box div, .summary-box p, .summary-box h3 {
+            color: #f8fafc !important;
+        }
+        .stImage img {
+            border-radius: 1rem;
+            box-shadow: 0 20px 35px rgba(15, 23, 42, 0.35);
+        }
+        .stCaptionContainer {
+            color: #cbd5e1 !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 init_db()
 
 
 def sidebar_menu() -> str:
+    st.sidebar.title("Menu")
+    st.sidebar.caption("Gestão de automóveis")
     return st.sidebar.radio(
         "Entidades",
         [
@@ -34,6 +133,35 @@ def sidebar_menu() -> str:
             "Vendas",
         ],
     )
+
+
+def render_summary_cards() -> None:
+    db = SessionLocal()
+    total_organizations = db.query(Organization).count()
+    total_vehicles = db.query(Vehicle).count()
+    total_users = db.query(User).count()
+    total_sales = db.query(Sale).count()
+    db.close()
+
+    cols = st.columns(4)
+    metrics = [
+        ("Organizações", total_organizations, "🏢"),
+        ("Veículos", total_vehicles, "🚗"),
+        ("Usuários", total_users, "👤"),
+        ("Vendas", total_sales, "💰"),
+    ]
+
+    for col, (label, value, icon) in zip(cols, metrics):
+        with col:
+            st.markdown(
+                f"""
+                <div class="summary-box">
+                    <div style="font-size: 0.85rem; color:#64748b; margin-bottom: 0.3rem;">{icon} {label}</div>
+                    <div style="font-size: 2rem; font-weight: 800; color:#0f172a;">{value}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 def get_session():
@@ -492,7 +620,29 @@ def render_sale_page():
 
 
 def main() -> None:
+    st.sidebar.image(SIDEBAR_IMAGE, width=220)
+
+    hero_col, info_col = st.columns([2.2, 1.1])
+    with hero_col:
+        st.image(HERO_IMAGE, width=900)
+    with info_col:
+        st.markdown(
+            """
+            <div class="summary-box" style="padding:1.2rem; margin-top:1rem;">
+                <div style="font-size:0.8rem; color:#64748b; text-transform:uppercase; letter-spacing:0.08em;">Painel principal</div>
+                <h3 style="margin:0.5rem 0; color:#0f172a;">Gestão completa de automóveis</h3>
+                <p style="margin:0; color:#475569; line-height:1.5;">
+                    Cadastre veículos, clientes, reservas, vendas e controle o fluxo da sua revenda com rapidez.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     st.title("Sistema de Gestão de Automóveis")
+    st.caption("Dashboard para gestão de veículos, clientes, reservas e vendas")
+    render_summary_cards()
+    st.markdown("<br>", unsafe_allow_html=True)
     page = sidebar_menu()
 
     if page == "Organizações":
